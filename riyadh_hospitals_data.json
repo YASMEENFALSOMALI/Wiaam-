@@ -1,0 +1,315 @@
+const riyadhHospitals = [
+  {
+    "id": 101,
+    "facility_name_en": "Dr. Mohammad Al Fakeeh Hospital",
+    "facility_name_ar": "مستشفى الدكتور محمد الفقيه",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Specialized Hospital",
+    "facility_type_ar": "مستشفى متخصص",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "licensed_beds": "200",
+    "rating": 3.6,
+    "phone": "011 456 0000",
+    "img": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=400&h=300",
+    "real_image_url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Health is our mission - Book now - A team of distinguished doctors and consultants with extensive experience.", "text_ar": "صحتك مهمتنا - احجز الآن - فريق من الأطباء والاستشاريين المتميزين بخبرة واسعة لرعايتك" }
+    ]
+  },
+  {
+    "id": 102,
+    "facility_name_en": "Prince Mohammed bin Abdulaziz Hospital",
+    "facility_name_ar": "مستشفى الأمير محمد بن عبدالعزيز",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Government",
+    "ownership_type_ar": "حكومي",
+    "licensed_beds": "500",
+    "rating": 2.7,
+    "phone": "800 127 7000",
+    "img": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400&h=300",
+    "real_image_url": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80",
+    "reviews": [
+      { "name": "Google User", "rating": 3, "text": "The hospital is quiet and I think they have the best people for X-rays.", "text_ar": "المستشفى هادئ واعتقد عندهم أحسن ناس تاخذ أشعة ولكن عليه ملاحظات." }
+    ]
+  },
+  {
+    "id": 103,
+    "facility_name_en": "Riyadh Hospital",
+    "facility_name_ar": "مستشفى الرياض",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Private Hospital",
+    "facility_type_ar": "مستشفى أهلي",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "licensed_beds": "150",
+    "rating": 3.9,
+    "phone": "011 521 5555",
+    "img": "https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&q=80&w=400&h=300",
+    "real_image_url": "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Modern and clean private hospital with a good discount upon opening.", "text_ar": "مستشفى أهلي حديث ونظيف وعندهم خصم طيب بمناسبة الافتتاح" }
+    ]
+  },
+  {
+    "id": 104,
+    "facility_name_en": "King Faisal Specialist Hospital & Research Centre",
+    "facility_name_ar": "مستشفى الملك فيصل التخصصي ومركز الأبحاث",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Government Hospital",
+    "facility_type_ar": "مستشفى حكومي",
+    "ownership_type_en": "Government",
+    "ownership_type_ar": "حكومي",
+    "licensed_beds": "1000",
+    "rating": 4.2,
+    "phone": "011 464 7272",
+    "img": "https://images.unsplash.com/photo-1504439468489-c8920d786a2b?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Excellent hospital and wonderful capabilities, but long wait.", "text_ar": "مستشفى ممتازة وإمكانيات روعة بس مع الأسف الانتظار طويل" }
+    ]
+  },
+  {
+    "id": 105,
+    "facility_name_en": "National Guard Hospital Riyadh",
+    "facility_name_ar": "مستشفى الحرس الوطني الرياض",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Government Hospital",
+    "facility_type_ar": "مستشفى حكومي",
+    "ownership_type_en": "Government",
+    "ownership_type_ar": "حكومي",
+    "licensed_beds": "800",
+    "rating": 3.4,
+    "phone": "011 801 1111",
+    "img": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 5, "text": "A wonderful hospital in every way, I thank everyone: doctors, nurses, staff.", "text_ar": "مستشفى رائع من كل النواحي اشكر الجميع أطباء، تمريض، موظفين جزاهم الله خير" }
+    ]
+  },
+  {
+    "id": 106,
+    "facility_name_en": "Al-Azhar Medical Hospital",
+    "facility_name_ar": "مستشفى الأزهار الطبي",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Specialized Hospital",
+    "facility_type_ar": "مستشفى متخصص",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "licensed_beds": "120",
+    "rating": 2.5,
+    "phone": "011 236 6788",
+    "img": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 3, "text": "Model hospital although high prices, it remains excellent in providing services.", "text_ar": "مستشفى نموذجي برغم من غلاء الأسعار إلا أنه يظل مميز بتقديم الخدمات" }
+    ]
+  },
+  {
+    "id": 107,
+    "facility_name_en": "Sehat Al-Salam Medical Hospital",
+    "facility_name_ar": "مستشفى صحة السلام الطبي",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.7,
+    "phone": "011 437 8887",
+    "img": "https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 5, "text": "Excellent experience, excellent care and interest from a top medical team.", "text_ar": "تجرّبه ممتازه مستشفى ممتازه رعايه واهتمام وفريق طبي ممتاز" }
+    ]
+  },
+  {
+    "id": 108,
+    "facility_name_en": "Al Jazira Hospital",
+    "facility_name_ar": "مستشفى الجزيرة",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.2,
+    "phone": "9200 05322",
+    "img": "https://images.unsplash.com/photo-1504439468489-c8920d786a2b?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Wonderful and clean hospital, beautiful team and integrated specialties.", "text_ar": "مستشفى رائع ونظيف وطاقم جميل وتخصصات فيه متكامله" }
+    ]
+  },
+  {
+    "id": 109,
+    "facility_name_en": "Care Medical Hospital - Ar Rawabi",
+    "facility_name_ar": "مستشفى رعاية الطبية - الروابي",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.9,
+    "phone": "011 437 8888",
+    "img": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 5, "text": "Wonderful, orderly and clean hospital, high interest and a beautiful team.", "text_ar": "مستشفى رائع ومرتب ونظيف واهتمام عالي وطاقم وكوادر من اجمل ما يكون" }
+    ]
+  },
+  {
+    "id": 110,
+    "facility_name_en": "How Medical Center - An Naseem Branch",
+    "facility_name_ar": "هاو الطبي فرع النسيم",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Medical Center",
+    "facility_type_ar": "مركز طبي",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 4.1,
+    "phone": "053 577 7515",
+    "img": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4.5, "text": "Very good echo and skilled in laser, clean work.", "text_ar": "ايكو صراحه مرا كويسه وشاطره باليزر شغلها مرا كويس ونظيف" }
+    ]
+  },
+  {
+    "id": 111,
+    "facility_name_en": "Hayat National Hospital",
+    "facility_name_ar": "مستشفى الحياة الوطني",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.8,
+    "phone": "9200 00094",
+    "img": "https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Excellent hospital and all medical staff are beautiful and respectful.", "text_ar": "مستشفى ممتاز وكل الطاقم الطبي تعامل جميل ومحترم حفظكم الله" }
+    ]
+  },
+  {
+    "id": 112,
+    "facility_name_en": "Specialized Medical Center Hospital (SMC)",
+    "facility_name_ar": "مستشفى المركز التخصصي الطبي",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Private Hospital",
+    "facility_type_ar": "مستشفى خاص",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.6,
+    "phone": "011 434 3800",
+    "img": "https://images.unsplash.com/photo-1504439468489-c8920d786a2b?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Wonderful hospital, experienced doctors, good laboratory service.", "text_ar": "مستشفى رائع الأطباء خبره وتعاملهم كويس خدمه المختبر جدا كويسه" }
+    ]
+  },
+  {
+    "id": 113,
+    "facility_name_en": "Al-Yamamah Hospital",
+    "facility_name_ar": "مستشفى اليمامة",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Maternity Hospital",
+    "facility_type_ar": "مستشفى الولادة",
+    "ownership_type_en": "Government",
+    "ownership_type_ar": "حكومي",
+    "rating": 2.5,
+    "phone": "800 127 7000",
+    "img": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Employee Salman Al-Mutairi's handling in calming and educating patients is remarkable.", "text_ar": "تعامل الموظف سلمان المطيري ف تهدئة وتوعية المرضى وخدمتهم شيء يذكر ف يشكرر" }
+    ]
+  },
+  {
+    "id": 114,
+    "facility_name_en": "Anfas Al-Raha Hospital",
+    "facility_name_ar": "مستشفى أنفاس الراحة",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 4.0,
+    "phone": "053 331 6522",
+    "img": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 5, "text": "Wonderful and integrated hospital, and thanks to receptionist Lama.", "text_ar": "مستشفى رائعة ومتكاملة، وشكراً لموظفة الاستقبال لمى على حسن تعاملها اللطيف" }
+    ]
+  },
+  {
+    "id": 115,
+    "facility_name_en": "Green Crescent Hospital",
+    "facility_name_ar": "مستشفى الهلال الأخضر",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "General Hospital",
+    "facility_type_ar": "مستشفى عام",
+    "ownership_type_en": "Private",
+    "ownership_type_ar": "خاص",
+    "rating": 3.4,
+    "phone": "9200 02063",
+    "img": "https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Clean hospital, professional staff, medicine and tests available.", "text_ar": "مستشفى نظيف والطاقم محترف والادوية والعلاجات والفحوصات متوفرة" }
+    ]
+  },
+  {
+    "id": 116,
+    "facility_name_en": "Children's Hospital - King Saud Medical City",
+    "facility_name_ar": "مستشفى الأطفال - مدينة الملك سعود الطبية",
+    "city_or_locality_en": "Riyadh",
+    "city_or_locality_ar": "الرياض",
+    "region_en": "Riyadh",
+    "region_ar": "الرياض",
+    "facility_type_en": "Children's Hospital",
+    "facility_type_ar": "مستشفى أطفال",
+    "ownership_type_en": "Government",
+    "ownership_type_ar": "حكومي",
+    "rating": 3.7,
+    "phone": "011 435 6666",
+    "img": "https://images.unsplash.com/photo-1504439468489-c8920d786a2b?auto=format&fit=crop&q=80&w=400&h=300",
+    "reviews": [
+      { "name": "Google User", "rating": 4, "text": "Good hospital especially in orthopedics and maxillofacial surgery.", "text_ar": "مستشفى جيد خاصة تخصص العظام، وتخصص جراحة الوجة والفكين" }
+    ]
+  }
+];
