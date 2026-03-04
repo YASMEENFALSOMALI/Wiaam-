@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null; // { role: 'patient' | 'staff' | 'admin', name: string }
     let pendingRole = 'patient';
     let authMode = 'login'; // 'login' | 'signup'
+    let selectedHospitalId = null;
 
     // DOM Elements
     const langToggleBtn = document.getElementById('langToggle');
@@ -229,11 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('editMeds').value = user.meds || '';
             document.getElementById('editSupplements').value = user.supplements || '';
 
-            editProfileModal.style.display = 'flex';
+            editProfileModal.classList.add('active');
         });
 
         closeEditProfileModal.addEventListener('click', () => {
-            editProfileModal.style.display = 'none';
+            editProfileModal.classList.remove('active');
         });
 
         editProfileForm.addEventListener('submit', (e) => {
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadUserProfile(currentUser.loginId);
             updateRouting(); // To refresh Navbar name
 
-            editProfileModal.style.display = 'none';
+            editProfileModal.classList.remove('active');
         });
     }
 
@@ -328,8 +329,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const staffDefaultView = document.getElementById('staffDefaultView');
 
     function initStaffWorkspace() {
+        if (!currentUser || currentUser.role !== 'staff') return;
+
         patientRecordContainer.classList.add('hidden');
         staffDefaultView.classList.remove('hidden');
+
+        renderStaffProfile();
+        renderStaffAppointments();
+    }
+
+    function renderStaffProfile() {
+        const doctors = window.WiaamDB.getCollection('doctors') || [];
+        const d = doctors.find(doc => doc.id === currentUser.loginId);
+
+        if (!d) return;
+
+        if (document.getElementById('staffName')) document.getElementById('staffName').textContent = currentLang === 'en' ? d.name_en : d.name_ar;
+        if (document.getElementById('staffSpecialty')) document.getElementById('staffSpecialty').textContent = currentLang === 'en' ? d.specialty_en : d.specialty_ar;
+        if (document.getElementById('staffAvatar')) document.getElementById('staffAvatar').textContent = d.name_en.charAt(4); // "Dr. X" -> X
+        if (document.getElementById('staffHospital')) document.getElementById('staffHospital').textContent = d.hospital_name_en;
+        if (document.getElementById('staffQuals')) document.getElementById('staffQuals').textContent = currentLang === 'en' ? d.qualifications_en : d.qualifications_ar;
+
+        const daysDiv = document.getElementById('staffDays');
+        if (daysDiv) {
+            daysDiv.innerHTML = '';
+            (d.available_days || []).forEach(day => {
+                const span = document.createElement('span');
+                span.className = 'badge';
+                span.style.cssText = "background: var(--color-bg-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: var(--radius-full);";
+                span.textContent = day;
+                daysDiv.appendChild(span);
+            });
+        }
+    }
+
+    function renderStaffAppointments() {
+        const allAppts = window.WiaamDB.getCollection('appointments') || [];
+        const myAppts = allAppts.filter(a => a.doctorId === currentUser.loginId);
+
+        const list = document.getElementById('staffApptsList');
+        const count = document.getElementById('staffApptCount');
+
+        if (count) count.textContent = myAppts.length;
+        if (!list) return;
+
+        if (myAppts.length === 0) {
+            list.innerHTML = `<p style="color: var(--color-text-muted); text-align: center; padding: 2rem;">No upcoming appointments.</p>`;
+            return;
+        }
+
+        list.innerHTML = '';
+        myAppts.forEach(appt => {
+            const patient = window.WiaamDB.getDoc('users', appt.patientId);
+            const pName = patient ? patient.name : 'Unknown Patient';
+
+            const card = document.createElement('div');
+            card.style.cssText = "padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: white; display: flex; justify-content: space-between; align-items: center;";
+            card.innerHTML = `
+                <div>
+                    <h4 style="margin-bottom: 0.25rem;">${pName}</h4>
+                    <p style="font-size: 0.85rem; color: var(--color-text-muted);">${appt.date} @ ${appt.time}</p>
+                </div>
+                <button class="btn-secondary btn-sm" onclick="document.getElementById('patientSearchInput').value='${appt.patientId}'; document.getElementById('searchPatientBtn').click();">View Record</button>
+            `;
+            list.appendChild(card);
+        });
     }
 
     if (searchPatientBtn) {
@@ -484,93 +548,19 @@ document.addEventListener('DOMContentLoaded', () => {
             modalHospitalSelect.appendChild(option);
         });
 
-        document.querySelectorAll('.open-appt').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (!currentUser || currentUser.role !== 'patient') {
-                    alert(currentLang === 'en' ? 'Please login as a patient to book an appointment.' : 'الرجاء تسجيل الدخول كمريض لحجز موعد.');
-                    openAuthModal();
-                    return;
-                }
-                const hId = e.target.getAttribute('data-id');
-                modalHospitalSelect.value = hId;
-                // Manually trigger change event to fetch doctors
-                modalHospitalSelect.dispatchEvent(new Event('change'));
-                apptModal.classList.add('active');
-            });
-        });
+        // Use delegated listeners on hospitalGrid to avoid multiple attachments
+        if (hospitalGrid && !hospitalGrid.dataset.listenersBound) {
+            hospitalGrid.addEventListener('click', (e) => {
+                const openDetailsBtn = e.target.closest('.open-details');
+                const openApptBtn = e.target.closest('.open-appt');
 
-        // Hospital Details Modal Logic
-        const hospitalModal = document.getElementById('hospitalModal');
-        const closeHospitalModal = document.getElementById('closeHospitalModal');
-        const hospitalModalImg = document.getElementById('hospitalModalImg');
-        const hospitalModalName = document.getElementById('hospitalModalName');
-        const hospitalModalRegion = document.getElementById('hospitalModalRegion');
-        const hospitalModalDesc = document.getElementById('hospitalModalDesc');
-        const hospitalModalType = document.getElementById('hospitalModalType');
-        const hospitalModalBeds = document.getElementById('hospitalModalBeds');
-        const hospitalModalReviews = document.getElementById('hospitalModalReviews');
-        const bookHospitalModalBtn = document.getElementById('bookHospitalModalBtn');
-        const hospitalModalPhone = document.getElementById('hospitalModalPhone');
-        const hospitalModalWebsite = document.getElementById('hospitalModalWebsite');
-
-        document.querySelectorAll('.open-details').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const hId = parseInt(e.target.getAttribute('data-id'));
-                const hObj = window.hospitalsData.find(h => h.id === hId);
-                if (!hObj) return;
-
-                hospitalModalImg.src = hObj.real_image_url || hObj.img || 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80';
-                hospitalModalName.textContent = currentLang === 'en' ? hObj.facility_name_en : hObj.facility_name_ar;
-                hospitalModalRegion.textContent = currentLang === 'en' ? hObj.region_en : hObj.region_ar;
-
-                // Fallback description
-                const descFallbackEn = "A premier healthcare facility offering advanced medical services and specialized care in the Kingdom.";
-                const descFallbackAr = "منشأة رعاية صحية رائدة تقدم خدمات طبية متقدمة ورعاية متخصصة في المملكة.";
-                hospitalModalDesc.textContent = hObj.description ?
-                    (currentLang === 'en' ? hObj.description.en : hObj.description.ar) :
-                    (currentLang === 'en' ? descFallbackEn : descFallbackAr);
-
-                hospitalModalType.textContent = currentLang === 'en' ? hObj.facility_type_en : hObj.facility_type_ar;
-                hospitalModalBeds.textContent = hObj.licensed_beds + (currentLang === 'en' ? ' Beds' : ' سرير');
-
-                hospitalModalPhone.textContent = hObj.phone || '+966 11 000 0000';
-
-                if (hObj.website) {
-                    hospitalModalWebsite.href = hObj.website;
-                    hospitalModalWebsite.style.display = 'inline';
-                } else {
-                    hospitalModalWebsite.style.display = 'none';
+                if (openDetailsBtn) {
+                    const hId = parseInt(openDetailsBtn.getAttribute('data-id'));
+                    showHospitalDetails(hId);
                 }
 
-                // Render Reviews
-                hospitalModalReviews.innerHTML = '';
-                const reviews = hObj.reviews || [
-                    { name: "Ahmed A.", rating: 5, text: "Excellent facility and very professional staff.", text_ar: "مرفق ممتاز وموظفون محترفون للغاية." },
-                    { name: "Sara S.", rating: 4, text: "Wait times can be long, but the doctors are great.", text_ar: "أوقات الانتظار يمكن أن تكون طويلة، ولكن الأطباء ممتازون." }
-                ];
-
-                reviews.forEach(r => {
-                    const stars = Array(5).fill(0).map((_, i) =>
-                        `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="${i < r.rating ? '#F59E0B' : '#E2E8F0'}" viewBox="0 0 24 24" stroke="none"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>`
-                    ).join('');
-
-                    const reviewText = currentLang === 'en' ? r.text : r.text_ar;
-
-                    const rDiv = document.createElement('div');
-                    rDiv.style.cssText = "padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg-soft);";
-                    rDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <strong>${r.name}</strong>
-                            <div style="display: flex; gap: 0.25rem;">${stars}</div>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--color-text-muted); padding: 0; margin: 0;">"${reviewText}"</p>
-                    `;
-                    hospitalModalReviews.appendChild(rDiv);
-                });
-
-                // Bind book button inside modal
-                bookHospitalModalBtn.onclick = () => {
-                    hospitalModal.classList.remove('active');
+                if (openApptBtn) {
+                    const hId = parseInt(openApptBtn.getAttribute('data-id'));
                     if (!currentUser || currentUser.role !== 'patient') {
                         alert(currentLang === 'en' ? 'Please login as a patient to book an appointment.' : 'الرجاء تسجيل الدخول كمريض لحجز موعد.');
                         openAuthModal();
@@ -579,26 +569,89 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalHospitalSelect.value = hId;
                     modalHospitalSelect.dispatchEvent(new Event('change'));
                     apptModal.classList.add('active');
-                };
-
-                // Bind directions button
-                const directionsHospitalModalBtn = document.getElementById('directionsHospitalModalBtn');
-                if (directionsHospitalModalBtn) {
-                    directionsHospitalModalBtn.onclick = () => {
-                        const searchQuery = encodeURIComponent(currentLang === 'en' ? hObj.facility_name_en : hObj.facility_name_ar);
-                        window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, '_blank');
-                    };
                 }
-
-                hospitalModal.classList.add('active');
             });
-        });
-
-        if (closeHospitalModal) {
-            closeHospitalModal.addEventListener('click', () => {
-                hospitalModal.classList.remove('active');
-            });
+            hospitalGrid.dataset.listenersBound = 'true';
         }
+    }
+
+    // Moved out of renderHospitals for efficiency and to avoid repetitive selector calls
+    const hospitalModal = document.getElementById('hospitalModal');
+    const closeHospitalModal = document.getElementById('closeHospitalModal');
+    const hospitalModalImg = document.getElementById('hospitalModalImg');
+    const hospitalModalName = document.getElementById('hospitalModalName');
+    const hospitalModalRegion = document.getElementById('hospitalModalRegion');
+    const hospitalModalDesc = document.getElementById('hospitalModalDesc');
+    const hospitalModalType = document.getElementById('hospitalModalType');
+    const hospitalModalBeds = document.getElementById('hospitalModalBeds');
+    const hospitalModalPhone = document.getElementById('hospitalModalPhone');
+    const hospitalModalWebsite = document.getElementById('hospitalModalWebsite');
+
+    function showHospitalDetails(hId) {
+        if (!hospitalModal) return;
+        selectedHospitalId = hId;
+        const hObj = window.hospitalsData.find(h => h.id === hId);
+        if (!hObj) return;
+
+        hospitalModalImg.src = hObj.real_image_url || hObj.img || 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80';
+        hospitalModalName.textContent = currentLang === 'en' ? hObj.facility_name_en : hObj.facility_name_ar;
+        hospitalModalRegion.textContent = currentLang === 'en' ? (hObj.city_or_locality_en !== 'Saudi Arabia' ? hObj.city_or_locality_en : hObj.region_en) : (hObj.city_or_locality_ar !== 'Saudi Arabia' ? hObj.city_or_locality_ar : hObj.region_ar);
+
+        // Fallback description
+        const descFallbackEn = "A premier healthcare facility offering advanced medical services and specialized care in the Kingdom.";
+        const descFallbackAr = "منشأة رعاية صحية رائدة تقدم خدمات طبية متقدمة ورعاية متخصصة في المملكة.";
+        hospitalModalDesc.textContent = hObj.description ?
+            (currentLang === 'en' ? hObj.description.en : hObj.description.ar) :
+            (currentLang === 'en' ? descFallbackEn : descFallbackAr);
+
+        if (hospitalModalType) hospitalModalType.textContent = currentLang === 'en' ? hObj.facility_type_en : hObj.facility_type_ar;
+        if (hospitalModalBeds) hospitalModalBeds.textContent = hObj.licensed_beds + (currentLang === 'en' ? ' Beds' : ' سرير');
+        if (hospitalModalPhone) hospitalModalPhone.textContent = hObj.phone || '+966 11 000 0000';
+
+        if (hospitalModalWebsite) {
+            hospitalModalWebsite.href = hObj.website || '#';
+            hospitalModalWebsite.textContent = hObj.website || (currentLang === 'en' ? 'Visit Website' : 'زيارة الموقع');
+        }
+
+        hospitalModal.classList.add('active');
+    }
+
+    if (closeHospitalModal) {
+        closeHospitalModal.addEventListener('click', () => {
+            hospitalModal.classList.remove('active');
+            selectedHospitalId = null;
+        });
+    }
+
+    const bookHospitalModalBtn = document.getElementById('bookHospitalModalBtn');
+    const directionsHospitalModalBtn = document.getElementById('directionsHospitalModalBtn');
+
+    if (bookHospitalModalBtn) {
+        bookHospitalModalBtn.addEventListener('click', () => {
+            if (!currentUser || currentUser.role !== 'patient') {
+                alert(currentLang === 'en' ? 'Please login as a patient to book an appointment.' : 'الرجاء تسجيل الدخول كمريض لحجز موعد.');
+                openAuthModal();
+                return;
+            }
+            if (selectedHospitalId) {
+                modalHospitalSelect.value = selectedHospitalId;
+                modalHospitalSelect.dispatchEvent(new Event('change'));
+                hospitalModal.classList.remove('active');
+                apptModal.classList.add('active');
+            }
+        });
+    }
+
+    if (directionsHospitalModalBtn) {
+        directionsHospitalModalBtn.addEventListener('click', () => {
+            if (selectedHospitalId) {
+                const hObj = window.hospitalsData.find(h => h.id === selectedHospitalId);
+                if (hObj) {
+                    const query = encodeURIComponent(`${hObj.facility_name_en} ${hObj.city_or_locality_en || 'Saudi Arabia'}`);
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                }
+            }
+        });
     }
 
     hospitalSearch.addEventListener('input', (e) => {
@@ -724,7 +777,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('docDetailPatients')) document.getElementById('docDetailPatients').textContent = d.patients || '1.1k';
         if (document.getElementById('docDetailExp')) document.getElementById('docDetailExp').textContent = d.exp || '2 years';
 
-        // Render Reviews
+        // Populate New Tab Content
+        const qualsPara = document.getElementById('docDetailQuals');
+        if (qualsPara) qualsPara.textContent = currentLang === 'en' ? d.qualifications_en : d.qualifications_ar;
+
+        const daysContainer = document.getElementById('docDetailDays');
+        if (daysContainer) {
+            daysContainer.innerHTML = '';
+            (d.available_days || []).forEach(day => {
+                const span = document.createElement('span');
+                span.className = 'badge';
+                span.style.cssText = "background: var(--color-bg-soft); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.8rem; border: 1px solid var(--color-border);";
+                span.textContent = day;
+                daysContainer.appendChild(span);
+            });
+        }
+
+        const aboutPara = document.getElementById('docDetailAbout');
+        if (aboutPara) {
+            const aboutTxt = currentLang === 'en' ? (d.about_en || `Dr. ${d.name_en} is a highly qualified specialist at ${d.hospital_name_en}.`)
+                : (d.about_ar || `د. ${d.name_ar} هو أخصائي مؤهل تأهيلاً عالياً في ${d.hospital_name_ar}.`);
+            aboutPara.textContent = aboutTxt;
+        }
+
+        // --- Render Reviews Tab (Default) ---
         const reviewsContainer = document.getElementById('docDetailReviews');
         if (reviewsContainer) {
             reviewsContainer.innerHTML = '';
@@ -734,27 +810,24 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 reviews.forEach(r => {
                     const reviewDiv = document.createElement('div');
-                    reviewDiv.className = 'review-card';
+                    reviewDiv.style.cssText = "padding: 1rem; border-bottom: 1px solid var(--color-border);";
                     reviewDiv.innerHTML = `
-                        <div class="review-header">
-                            <div class="reviewer-img"></div>
-                            <div class="reviewer-info" style="flex: 1;">
-                                <div class="reviewer-meta">
-                                    <span class="name">${r.user}</span>
-                                    <span>${r.date}</span>
-                                </div>
-                                <div style="color: #ffb800; font-size: 0.8rem; margin-top: 2px;">
-                                    ${'★'.repeat(Math.floor(r.rating))}${'☆'.repeat(5 - Math.floor(r.rating))} 
-                                    <span style="color: var(--color-text-dark); margin-left: 4px;">${r.rating}</span>
-                                </div>
-                            </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>${r.user}</strong>
+                            <span style="color: var(--color-text-muted); font-size: 0.8rem;">${r.date}</span>
                         </div>
-                        <p class="review-text">${r.text}</p>
+                        <div style="color: #ffb800; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                            ${'★'.repeat(Math.floor(r.rating))}${'☆'.repeat(5 - Math.floor(r.rating))} 
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);">${r.text}</p>
                     `;
                     reviewsContainer.appendChild(reviewDiv);
                 });
             }
         }
+
+        // Reset Tabs to Feedbacks
+        if (typeof switchDocTab === 'function') switchDocTab('Feedbacks');
 
         doctorDetailsModal.classList.add('active');
     }
@@ -788,6 +861,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (doctorSearch) {
         doctorSearch.addEventListener('input', (e) => {
             renderDoctors(e.target.value);
+        });
+    }
+
+    // --- Helper for doctor discovery tabs ---
+    function switchDocTab(tabName) {
+        const sections = ['Feedbacks', 'Docs', 'About'];
+        sections.forEach(s => {
+            const btn = document.getElementById(`tab${s}`);
+            const sec = document.getElementById(`section${s}`);
+            if (btn) btn.classList.toggle('active', s === tabName);
+            if (sec) sec.classList.toggle('hidden', s !== tabName);
+        });
+    }
+
+    // Tab Event Listeners
+    if (document.getElementById('tabFeedbacks')) {
+        ['Feedbacks', 'Docs', 'About'].forEach(tab => {
+            const btn = document.getElementById(`tab${tab}`);
+            if (btn) btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchDocTab(tab);
+            });
         });
     }
 
@@ -876,6 +971,15 @@ document.addEventListener('DOMContentLoaded', () => {
         generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
         // Always show alert for OTP so user can proceed even with fake data
         setTimeout(() => {
+            const mfaCodeDisplay = document.getElementById('mfaCodeDisplay');
+            const otpValue = document.getElementById('otpValue');
+            const otpInput = document.getElementById('otpInput');
+            if (mfaCodeDisplay && otpValue) {
+                otpValue.textContent = generatedOTP;
+                mfaCodeDisplay.style.display = 'block';
+                // Auto-fill for convenience in test environments if needed, 
+                // but let's just make it visible as requested.
+            }
             alert(`[Wiaam OTP] Your verification code is: ${generatedOTP}`);
         }, 500);
 
@@ -899,13 +1003,15 @@ document.addEventListener('DOMContentLoaded', () => {
     backToLoginBtn.addEventListener('click', () => {
         authStep2.style.display = 'none';
         authStep1.style.display = 'block';
+        const mfaCodeDisplay = document.getElementById('mfaCodeDisplay');
+        if (mfaCodeDisplay) mfaCodeDisplay.style.display = 'none';
     });
 
     // MFA Form Submit -> Complete Login
     mfaForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const enteredOTP = document.querySelector('#mfaForm input[type="text"]').value;
+        const enteredOTP = document.getElementById('otpInput').value;
         if (enteredOTP !== generatedOTP && enteredOTP !== '123456') {
             alert(currentLang === 'en' ? 'Invalid Verification Code.' : 'رمز التحقق غير صحيح.');
             return;
@@ -913,13 +1019,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (authMode === 'signup' && signupName.value) {
             const loginIdField = document.getElementById('loginId').value;
+            const passwordField = document.getElementById('loginPassword').value;
             currentUser = {
                 loginId: loginIdField,
                 role: pendingRole,
                 name: signupName.value
             };
-            // Save to DB
-            window.WiaamDB.setDoc('users', loginIdField, { ...currentUser, password: 'password123' });
+            // Save to DB with ACTUAL password
+            window.WiaamDB.setDoc('users', loginIdField, { ...currentUser, password: passwordField });
         } else {
             currentUser = {
                 loginId: window.pendingUserId,
@@ -1093,24 +1200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    const aiResponses = {
-        "booking": "You can book an appointment by clicking 'Find a Hospital' or from your Patient Dashboard calendar.",
-        "حجز": "يمكنك حجز موعد بالضغط على 'البحث عن مستشفى' أو من تقويم بوابة المريض الخاصة بك.",
-        "pharmacy": "Most participating hospitals like KFMC and King Khalid have 24/7 pharmacies on-site.",
-        "صيدلية": "معظم المستشفيات المشاركة مثل مدينة الملك فهد الطبية ومستشفى الملك خالد لديها صيدليات تعمل على مدار الساعة.",
-        "emergency": "For medical emergencies, please dial 997 or visit the nearest Emergency Department immediately.",
-        "طوارئ": "للحالات الطبية الطارئة، يرجى الاتصال بالرقم 997 أو زيارة أقرب قسم طوارئ على الفور.",
-        "profile": "Your unified medical record is accessible via the 'My Unified Profile' tab after you login with your National ID.",
-        "ملف": "يمكنك الوصول إلى سجلك الطبي الموحد من خلال تبويب 'ملفي الموحد' بعد تسجيل الدخول بهويتك الوطنية.",
-        "headache": "For persistent headaches, you might want to see a Neurology specialist like Dr. Sara Al-Saud.",
-        "صداع": "بالنسبة للصداع المستمر، قد ترغب في مراجعة أخصائي أمراض الأعصاب مثل د. سارة آل سعود.",
-        "heart": "For heart issues, our Cardiology specialists (e.g., Dr. Faisal Al-Harbi) are available for matching.",
-        "قلب": "لمشاكل القلب، أخصائيو أمراض القلب لدينا (مثل د. فيصل الحربي) متاحون للمطابقة.",
-        "child": "For pediatric care, Dr. Ahmed Tariq is highly recommended.",
-        "طفل": "لرعاية الأطفال، نوصي بشدة بالدكتور أحمد طارق.",
-        "hours": "Hospital visiting hours are generally 4:00 PM to 8:00 PM daily.",
-        "ساعات": "ساعات زيارة المستشفى بشكل عام من 4:00 مساءً إلى 8:00 مساءً يومياً."
-    };
+    // AI Responses have been moved to medicalAI.js
 
     sendChatBtn.addEventListener('click', () => {
         const text = chatInput.value.trim().toLowerCase();
@@ -1118,20 +1208,13 @@ document.addEventListener('DOMContentLoaded', () => {
         appendChat(chatInput.value, true);
         chatInput.value = '';
 
-        let botReply = currentLang === 'en'
-            ? "I'm a Wiaam AI Agent. Try asking about 'booking', 'pharmacy', or 'emergency'."
-            : "أنا وكيل ذكاء اصطناعي في وئام. جرب السؤال عن 'الحجز' أو 'الصيدلية' أو 'الطوارئ'.";
-
-        for (const key in aiResponses) {
-            if (text.includes(key)) {
-                botReply = aiResponses[key];
-                break;
-            }
-        }
+        let botReply = window.wiaamMedicalAI
+            ? window.wiaamMedicalAI.processMessage(text, currentLang)
+            : (currentLang === 'en' ? "AI Agent is offline." : "الذكاء الاصطناعي غير متصل.");
 
         setTimeout(() => {
             appendChat(botReply);
-        }, 800);
+        }, 800 + Math.random() * 500); // Add a slight random delay to feel like "typing"
     });
 
     chatInput.addEventListener('keypress', (e) => {
@@ -1176,6 +1259,79 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Render Loop
     updateTranslations();
     updateRouting();
+
+    // Pharmacy Availability Logic
+    const searchPharmacyBtn = document.getElementById('searchPharmacyBtn');
+    const pharmacySearchInput = document.getElementById('pharmacySearchInput');
+    const pharmacyResults = document.getElementById('pharmacyResults');
+
+    if (searchPharmacyBtn) {
+        searchPharmacyBtn.addEventListener('click', () => {
+            const query = (pharmacySearchInput.value || '').trim().toLowerCase();
+            if (!query) return;
+            performPharmacySearch(query);
+        });
+
+        pharmacySearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchPharmacyBtn.click();
+        });
+    }
+
+    function performPharmacySearch(query) {
+        if (!pharmacyResults) return;
+        pharmacyResults.innerHTML = '';
+
+        const pharmacies = window.pharmaciesData || [];
+        let foundAny = false;
+
+        pharmacies.forEach(p => {
+            const matches = p.stock.filter(s =>
+                s.med_en.toLowerCase().includes(query) ||
+                s.med_ar.includes(query)
+            );
+
+            if (matches.length > 0) {
+                foundAny = true;
+                matches.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-effect';
+                    card.style.padding = '1.5rem';
+                    card.style.borderRadius = 'var(--radius-lg)';
+                    card.style.display = 'flex';
+                    card.style.flexDirection = 'column';
+                    card.style.justifyContent = 'space-between';
+
+                    const statusText = m.available ?
+                        `<span style="color: #10B981; font-weight: 700;">● In Stock</span>` :
+                        `<span style="color: #EF4444; font-weight: 700;">○ Out of Stock</span>`;
+
+                    card.innerHTML = `
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                <h4 style="font-size: 1.1rem; color: var(--color-primary);">${currentLang === 'en' ? p.name_en : p.name_ar}</h4>
+                                <span style="font-weight: 700; color: var(--color-text-dark);">${m.price} SAR</span>
+                            </div>
+                            <p style="font-weight: 600; margin-bottom: 0.25rem;">${currentLang === 'en' ? m.med_en : m.med_ar}</p>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted);">${currentLang === 'en' ? p.address_en : p.address_ar}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 1rem;">
+                            ${statusText}
+                            <a href="tel:${p.phone}" class="btn-text" style="font-size: 0.85rem;">Call Pharmacy</a>
+                        </div>
+                    `;
+                    pharmacyResults.appendChild(card);
+                });
+            }
+        });
+
+        if (!foundAny) {
+            pharmacyResults.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--color-text-muted);">
+                    <p>No pharmacies found with "${query}". Try searching for another medication.</p>
+                </div>
+            `;
+        }
+    }
 
     // Trigger initial hash check
     if (window.location.hash) {
