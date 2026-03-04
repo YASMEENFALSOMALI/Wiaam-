@@ -5,7 +5,7 @@
  */
 
 const DB_KEY = 'wiaam_database';
-const DB_VERSION = '2.1'; // Update this to force-refresh all users' data
+const DB_VERSION = '2.2'; // Update this to force-refresh all users' data
 
 // Initial Seed Data
 const defaultData = {
@@ -112,6 +112,8 @@ const defaultData = {
             specialty_en: 'Neurology', specialty_ar: 'أعصاب',
             hospital_id: 1, hospital_name_en: 'King Faisal Specialist Hospital',
             qualifications_en: 'MD from King Saud University, Board Certified in Neurology', qualifications_ar: 'دكتوراه في الطب من جامعة الملك سعود، بورد في الأعصاب',
+            about_en: 'Dr. Sara is a dedicated neurologist with over 12 years of experience specializing in neurodegenerative diseases and patient-centered care.',
+            about_ar: 'د. سارة طبيبة أعصاب مكرسة بخبرة تزيد عن 12 عاماً متخصصة في الأمراض العصبية والرعاية التي تركز على المريض.',
             available_days: ['Tuesday', 'Thursday'],
             rating: 4.8, reviewCount: 124, price: 500,
             visits: "3.2k", patients: "1.5k", exp: "12 years",
@@ -126,6 +128,8 @@ const defaultData = {
             specialty_en: 'Cardiology', specialty_ar: 'قلب',
             hospital_id: 2, hospital_name_en: 'Johns Hopkins Aramco Healthcare',
             qualifications_en: 'MD from Johns Hopkins, Specialist in Interventional Cardiology', qualifications_ar: 'دكتوراه في الطب من جامعة جونز هوبكينز، أخصائي في أمراض القلب التدخلية',
+            about_en: 'Dr. Faisal is a world-class cardiologist with a focus on minimally invasive heart procedures and preventative care.',
+            about_ar: 'د. فيصل طبيب قلب من طراز عالمي يركز على إجراءات القلب طفيفة التوغل والرعاية الوقائية.',
             available_days: ['Monday', 'Wednesday'],
             rating: 4.9, reviewCount: 85, price: 650,
             visits: "2.3k", patients: "1.1k", exp: "8 years",
@@ -139,6 +143,8 @@ const defaultData = {
             specialty_en: 'Pediatrics', specialty_ar: 'أطفال',
             hospital_id: 4, hospital_name_en: 'Security Forces Hospital',
             qualifications_en: 'MD from University of Manchester, Pediatrician with 10+ years experience', qualifications_ar: 'دكتوراه في الطب من جامعة مانشستر، طبيب أطفال بخبرة تزيد عن 10 سنوات',
+            about_en: 'Dr. Ahmed has a passion for pediatric care and has treated thousands of children with a gentle and professional approach.',
+            about_ar: 'د. أحمد لديه شغف برعاية الأطفال وقد عالج آلاف الأطفال بأسلوب لطيف ومهني.',
             available_days: ['Sunday', 'Monday', 'Tuesday'],
             rating: 4.7, reviewCount: 210, price: 350,
             visits: "5.1k", patients: "2.8k", exp: "15 years",

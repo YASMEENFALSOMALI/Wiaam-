@@ -3128,7 +3128,7 @@ window.hospitalsData = [
   },
   {
     "id": 102,
-    "facility_name_en": "مستوصف السليمانيه",
+    "facility_name_en": "Sulaimania Dispensary",
     "facility_name_ar": "مستوصف السليمانيه",
     "city_or_locality_en": "Saudi Arabia",
     "city_or_locality_ar": "Saudi Arabia",
@@ -4646,7 +4646,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 101,
+    "id": 201,
     "facility_name_en": "Dr. Mohammad Al Fakeeh Hospital",
     "facility_name_ar": "مستشفى الدكتور محمد الفقيه",
     "city_or_locality_en": "Riyadh",
@@ -4667,7 +4667,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 102,
+    "id": 202,
     "facility_name_en": "Prince Mohammed bin Abdulaziz Hospital",
     "facility_name_ar": "مستشفى الأمير محمد بن عبدالعزيز",
     "city_or_locality_en": "Riyadh",
@@ -4688,7 +4688,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 103,
+    "id": 203,
     "facility_name_en": "Riyadh Hospital",
     "facility_name_ar": "مستشفى الرياض",
     "city_or_locality_en": "Riyadh",
@@ -4709,7 +4709,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 104,
+    "id": 204,
     "facility_name_en": "King Faisal Specialist Hospital & Research Centre",
     "facility_name_ar": "مستشفى الملك فيصل التخصصي ومركز الأبحاث",
     "city_or_locality_en": "Riyadh",
@@ -4729,7 +4729,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 105,
+    "id": 205,
     "facility_name_en": "National Guard Hospital (KAMC)",
     "facility_name_ar": "مستشفى الحرس الوطني (مدينة الملك عبدالعزيز)",
     "city_or_locality_en": "Riyadh",
@@ -4749,7 +4749,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 106,
+    "id": 206,
     "facility_name_en": "Al-Azhar Medical Hospital",
     "facility_name_ar": "مستشفى الأزهار الطبي",
     "city_or_locality_en": "Riyadh",
@@ -4769,7 +4769,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 107,
+    "id": 207,
     "facility_name_en": "Sehat Al-Salam Medical Hospital",
     "facility_name_ar": "مستشفى صحة السلام الطبي",
     "city_or_locality_en": "Riyadh",
@@ -4788,7 +4788,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 108,
+    "id": 208,
     "facility_name_en": "Al Jazira Hospital",
     "facility_name_ar": "مستشفى الجزيرة",
     "city_or_locality_en": "Riyadh",
@@ -4807,7 +4807,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 109,
+    "id": 209,
     "facility_name_en": "Care Medical Hospital - Ar Rawabi",
     "facility_name_ar": "مستشفى رعاية الطبية - الروابي",
     "city_or_locality_en": "Riyadh",
@@ -4826,7 +4826,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 110,
+    "id": 210,
     "facility_name_en": "How Medical Center - An Naseem Branch",
     "facility_name_ar": "هاو الطبي فرع النسيم",
     "city_or_locality_en": "Riyadh",
@@ -4845,7 +4845,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 111,
+    "id": 211,
     "facility_name_en": "Hayat National Hospital",
     "facility_name_ar": "مستشفى الحياة الوطني",
     "city_or_locality_en": "Riyadh",
@@ -4864,7 +4864,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 112,
+    "id": 212,
     "facility_name_en": "Specialized Medical Center Hospital (SMC)",
     "facility_name_ar": "مستشفى المركز التخصصي الطبي",
     "city_or_locality_en": "Riyadh",
@@ -4883,7 +4883,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 113,
+    "id": 213,
     "facility_name_en": "Al-Yamamah Hospital",
     "facility_name_ar": "مستشفى اليمامة",
     "city_or_locality_en": "Riyadh",
@@ -4902,7 +4902,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 114,
+    "id": 214,
     "facility_name_en": "Anfas Al-Raha Hospital",
     "facility_name_ar": "مستشفى أنفاس الراحة",
     "city_or_locality_en": "Riyadh",
@@ -4921,7 +4921,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 115,
+    "id": 215,
     "facility_name_en": "Green Crescent Hospital",
     "facility_name_ar": "مستشفى الهلال الأخضر",
     "city_or_locality_en": "Riyadh",
@@ -4940,7 +4940,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 116,
+    "id": 216,
     "facility_name_en": "Children's Hospital - King Saud Medical City",
     "facility_name_ar": "مستشفى الأطفال - مدينة الملك سعود الطبية",
     "city_or_locality_en": "Riyadh",
@@ -4959,7 +4959,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 117,
+    "id": 217,
     "facility_name_en": "King Fahad Hospital (Medical City)",
     "facility_name_ar": "مستشفى الملك فهد (المدينة الطبية)",
     "city_or_locality_en": "Riyadh",
@@ -4978,7 +4978,7 @@ window.hospitalsData = [
     ]
   },
   {
-    "id": 118,
+    "id": 218,
     "facility_name_en": "Mouwasat Hospital Riyadh",
     "facility_name_ar": "مستشفى المواساة الرياض",
     "city_or_locality_en": "Riyadh",

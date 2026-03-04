@@ -963,3 +963,38 @@ button {
     display: none;
   }
 }
+
+/* Custom Utilities */
+.hidden {
+  display: none !important;
+}
+
+/* Tab Switching */
+.tab-section {
+  animation: fadeIn 0.3s ease;
+}
+
+.doc-tab {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.doc-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: rgba(0, 108, 53, 0.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
