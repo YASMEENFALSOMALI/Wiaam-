@@ -14,7 +14,7 @@
     rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="app.css">
 </head>
 
 <body>
@@ -519,8 +519,54 @@
           <button class="btn-primary" id="searchPatientBtn" data-i18n="searchPatient">Search Patient</button>
         </div>
 
-        <div id="patientRecordContainer" class="hidden">
+        <div id="patientRecordContainer" class="hidden" style="margin-top: 2rem;">
           <!-- Dynamically populated patient record -->
+        </div>
+
+        <div id="staffWorkspaceContent"
+          style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; margin-top: 2rem;">
+          <!-- Left: Staff Profile -->
+          <div id="staffProfileSection" class="glass-effect" style="padding: 1.5rem; border-radius: var(--radius-lg);">
+            <div
+              style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); padding-bottom: 1rem;">
+              <div id="staffAvatar"
+                style="width: 60px; height: 60px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700;">
+                D</div>
+              <div>
+                <h3 id="staffName" style="font-size: 1.25rem;">Dr. Name</h3>
+                <p id="staffSpecialty" style="color: var(--color-primary); font-weight: 600; font-size: 0.9rem;">
+                  Specialty</p>
+              </div>
+            </div>
+            <div style="display: grid; gap: 1rem; font-size: 0.9rem;">
+              <div>
+                <p style="color: var(--color-text-muted);" data-i18n="hospital">Hospital</p>
+                <strong id="staffHospital">---</strong>
+              </div>
+              <div>
+                <p style="color: var(--color-text-muted);" data-i18n="qualifications">Qualifications</p>
+                <p id="staffQuals" style="line-height: 1.4;"></p>
+              </div>
+              <div>
+                <p style="color: var(--color-text-muted);" data-i18n="availableDays">Available Days</p>
+                <div id="staffDays" style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.25rem;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Appointments with Me -->
+          <div id="staffAppointmentsSection" class="glass-effect"
+            style="padding: 1.5rem; border-radius: var(--radius-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.25rem;" data-i18n="myAppointments">Appointments with Me</h3>
+              <span id="staffApptCount" class="badge" style="background: var(--color-primary); color: white;">0</span>
+            </div>
+            <div id="staffApptsList" style="display: grid; gap: 1rem;">
+              <!-- Populated by JS -->
+              <p style="color: var(--color-text-muted); text-align: center; padding: 2rem;" data-i18n="noAppts">No
+                upcoming appointments.</p>
+            </div>
+          </div>
         </div>
 
         <div id="staffDefaultView"
@@ -605,6 +651,38 @@
       </div>
     </section>
 
+    <!-- 4. Pharmacy Availability -->
+    <section id="pharmacy" class="section-padding bg-soft">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="pharmacyTitle">Pharmacy Availability</h2>
+          <p class="section-desc" data-i18n="pharmacyDesc">Find which pharmacies have your medication in stock and
+            compare prices.</p>
+        </div>
+
+        <div class="search-bar glass-effect" style="max-width: 700px; margin: 0 auto 3rem auto;">
+          <div class="search-input-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" class="search-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="pharmacySearchInput" data-i18n-placeholder="searchMedPlaceholder"
+              placeholder="Search medication (e.g. Panadol)...">
+          </div>
+          <button id="searchPharmacyBtn" class="btn-primary" data-i18n="search">Search</button>
+        </div>
+
+        <div id="pharmacyResults" class="hospital-grid">
+          <!-- Populated by JS -->
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--color-text-muted);">
+            <p data-i18n="pharmacySearchPrompt">Enter a medication name to see availability across nearby pharmacies.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Modals -->
@@ -675,7 +753,7 @@
         <form id="mfaForm" class="modal-form">
           <div class="form-group">
             <label data-i18n="otpLabel">6-Digit OTP code</label>
-            <input type="text" class="form-input" required maxlength="6" pattern="[0-9]{6}"
+            <input type="text" id="otpInput" class="form-input" required maxlength="6" pattern="[0-9]{6}"
               style="letter-spacing: 0.5rem; text-align: center; font-size: 1.25rem; font-weight: 700;">
           </div>
           <button type="submit" class="btn-primary btn-block" data-i18n="verifyOTP">Verify Identity</button>
@@ -812,6 +890,116 @@
   </div>
   </div>
 
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal-overlay">
+    <div class="modal-content glass-effect"
+      style="max-width: 600px; padding: 2rem; overflow-y: auto; max-height: 90vh;">
+      <button id="closeEditProfileModal" class="close-modal">&times;</button>
+      <div class="modal-header">
+        <h3 data-i18n="editProfile">Edit Profile</h3>
+        <p data-i18n="editProfileDesc">Update your health record and contact information.</p>
+      </div>
+      <form id="editProfileForm">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label data-i18n="fullName">Full Name</label>
+            <input type="text" id="editName" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label data-i18n="bloodType">Blood Type</label>
+            <select id="editBloodType" class="form-input">
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="age">Age</label>
+            <input type="number" id="editAge" class="form-input">
+          </div>
+          <div class="form-group">
+            <label data-i18n="gender">Gender</label>
+            <select id="editGender" class="form-input">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="dob">Date of Birth</label>
+            <input type="date" id="editDob" class="form-input">
+          </div>
+          <div class="form-group">
+            <label data-i18n="phone">Phone</label>
+            <input type="text" id="editPhone" class="form-input">
+          </div>
+          <div class="form-group">
+            <label data-i18n="email">Email</label>
+            <input type="email" id="editEmail" class="form-input">
+          </div>
+          <div class="form-group">
+            <label data-i18n="pcp">Primary Care Physician</label>
+            <input type="text" id="editPcp" class="form-input">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label data-i18n="emergencyContact">Emergency Contact</label>
+            <input type="text" id="editEmContact" class="form-input">
+          </div>
+          <div class="form-group">
+            <label data-i18n="emergencyPhone">Emergency Phone</label>
+            <input type="text" id="editEmPhone" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="caregiver">Caregiver</label>
+          <input type="text" id="editCaregiver" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="allergies">Allergies (comma separated)</label>
+          <input type="text" id="editAllergies" class="form-input" placeholder="e.g. Penicillin, Peanuts">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="chronic">Chronic Conditions</label>
+          <input type="text" id="editChronic" class="form-input" placeholder="e.g. Asthma, Diabetes">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="surgeries">Past Surgeries</label>
+          <input type="text" id="editSurgeries" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="familyHx">Family History</label>
+          <input type="text" id="editFamilyHx" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="meds">Current Medications</label>
+          <input type="text" id="editMeds" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="supplements">Supplements</label>
+          <input type="text" id="editSupplements" class="form-input">
+        </div>
+
+        <button type="submit" class="btn-primary btn-block" data-i18n="saveChanges" style="margin-top: 1rem;">Save
+          Changes</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Premium Doctor Details Modal -->
   <div id="doctorDetailsModal" class="modal-overlay">
     <div class="modal-content">
@@ -896,17 +1084,33 @@
 
       <!-- Tabs -->
       <div class="doc-tabs">
-        <button class="doc-tab active">Feedbacks</button>
-        <button class="doc-tab">Docs</button>
-        <button class="doc-tab">About</button>
+        <button class="doc-tab active" id="tabFeedbacks">Feedbacks</button>
+        <button class="doc-tab" id="tabDocs">Docs</button>
+        <button class="doc-tab" id="tabAbout">About</button>
       </div>
 
-      <!-- Content (Reviews) -->
-      <div class="review-section">
-        <h4 style="font-size: 1.1rem; font-weight: 700;">Last reviews</h4>
-        <div id="docDetailReviews">
-          <!-- Reviews populated by JS -->
+      <!-- Content Sections -->
+      <div id="sectionFeedbacks" class="tab-section">
+        <div class="review-section">
+          <h4 style="font-size: 1.1rem; font-weight: 700;" data-i18n="lastReviews">Last reviews</h4>
+          <div id="docDetailReviews">
+            <!-- Reviews populated by JS -->
+          </div>
         </div>
+      </div>
+
+      <div id="sectionDocs" class="tab-section hidden" style="padding: 1rem;">
+        <h4 style="font-size: 1.1rem; font-weight: 700;" data-i18n="qualifications">Qualifications & Experience</h4>
+        <p id="docDetailQuals" style="margin-top: 1rem; line-height: 1.6; color: var(--color-text-muted);"></p>
+        <div style="margin-top: 1.5rem;">
+          <h5 style="font-weight: 600; margin-bottom: 0.5rem;" data-i18n="availableDays">Available Days</h5>
+          <div id="docDetailDays" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+        </div>
+      </div>
+
+      <div id="sectionAbout" class="tab-section hidden" style="padding: 1rem;">
+        <h4 style="font-size: 1.1rem; font-weight: 700;" data-i18n="aboutDoctor">About the Doctor</h4>
+        <p id="docDetailAbout" style="margin-top: 1rem; line-height: 1.6; color: var(--color-text-muted);"></p>
       </div>
 
       <!-- Action Bar -->
@@ -942,10 +1146,12 @@
   </div>
 
   <!-- Scripts -->
-  <script src="js/db.js"></script>
-  <script src="js/data/hospitals.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/app.js"></script>
+  <script src="db.js"></script>
+  <script src="hospitals.js"></script>
+  <script src="pharmacies.js"></script>
+  <script src="i18n.js"></script>
+  <script src="js/medicalAI.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
